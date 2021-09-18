@@ -2,20 +2,27 @@ import "package:flutter/material.dart";
 import "input.dart";
 import "package:rna_learning/models/users.dart";
 
-
-
 class Login extends StatefulWidget {
+  var users = Users();
   @override
-  _LoginState createState() => _LoginState();
+  _LoginState createState() => _LoginState(users);
 }
 
 class _LoginState extends State<Login> {
+  Users users;
   final _usrController = TextEditingController();
   final _passController = TextEditingController();
   bool logged = false;
+
+  _LoginState(this.users);
+
   void validate() {
-    print(_usrController.text);
-    print(_passController.text);
+    var user = users.validateUser(_usrController.text, _passController.text);
+    if (user != null) {
+      setState(() {
+        logged = true;
+      });
+    }
   }
 
   @override

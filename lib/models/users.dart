@@ -21,19 +21,15 @@ class Users {
   void add(User user) => users.add(user);
 
   User? validateUser(String username, String password) {
-    try{
- return users.firstWhere(
-      (user) => user.username == username && user.password == password)
-    }
-    catch(){
-      
+    User? user;
+    try {
+      user = users.firstWhere(
+          (user) => user.username == username && user.password == password);
+    } catch (e) {
+      user = null;
+    } finally {
+      // ignore: control_flow_in_finally
+      return user;
     }
   }
-}
-
-
-void main() {
-  var u = Users();
-  var res = u.validateUser("jose.deavila15", "123");
-  print(res.toString());
 }
