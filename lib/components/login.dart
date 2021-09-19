@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:rna_learning/screens/employees_screen.dart';
 import "input.dart";
 import "package:rna_learning/models/users.dart";
 
@@ -22,6 +23,14 @@ class _LoginState extends State<Login> {
       setState(() {
         logged = true;
       });
+    }
+    redirectEmployees();
+  }
+
+  void redirectEmployees() {
+    if (logged == true) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => EmployeesPage()));
     }
   }
 
