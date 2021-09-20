@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
+import "package:crypto/crypto.dart";
 
 class Employee {
+  var id;
   String name, lastName, job;
   String? photoUrl;
   DateTime dateOfBirth = DateTime.now();
@@ -11,6 +15,7 @@ class Employee {
     this.job = "System Engineer",
     this.photoUrl,
   }) {
+    id = sha1.convert(utf8.encode(name));
     dateOfBirth = date;
   }
 

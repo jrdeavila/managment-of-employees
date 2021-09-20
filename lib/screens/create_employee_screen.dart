@@ -4,14 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:rna_learning/components/alert.dart';
 import 'package:rna_learning/models/employee.dart';
 import 'package:rna_learning/models/employees.dart';
-import 'package:rna_learning/screens/employees_screen.dart';
 
 // ignore: must_be_immutable
 class CreateEmployeePage extends StatefulWidget {
-  Employees employees;
   Employee? employee;
-  CreateEmployeePage(this.employees, {this.employee, Key? key})
-      : super(key: key);
+  CreateEmployeePage({this.employee, Key? key}) : super(key: key);
 
   @override
   _CreateEmployeePageState createState() => _CreateEmployeePageState();
@@ -30,7 +27,7 @@ class _CreateEmployeePageState extends State<CreateEmployeePage> {
       String? name = widget.employee != null ? widget.employee?.name : '';
       String? lstName =
           widget.employee != null ? widget.employee?.lastName : '';
-      String? job = widget.employee != null ? widget.employee?.lastName : '';
+      String? job = widget.employee != null ? widget.employee?.job : '';
       String? photo = widget.employee != null ? widget.employee?.photoUrl : '';
       dateOfBirth = widget.employee != null
           ? widget.employee?.dateOfBirth
@@ -128,8 +125,8 @@ class _CreateEmployeePageState extends State<CreateEmployeePage> {
                   //Save employee
                   _saveEmployee();
                 },
-                child: const Text("Save",
-                    style: TextStyle(
+                child: Text(widget.employee == null ? "Save" : "Save Changes",
+                    style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 19,
                     )),
@@ -156,17 +153,12 @@ class _CreateEmployeePageState extends State<CreateEmployeePage> {
         job: jobCtrl.text,
         photoUrl: photoUrlCtrl.text,
       );
-      widget.employees.add(nwEmp);
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => EmployeesPage(widget.employees)));
-      alert(
-        context,
-        message: "Employee added sucessfully",
-        color: Colors.green,
-        duration: 2,
-      );
+      if (widget.employee != null) {
+        update(nwEmp, widget.employee?.id);
+      } else {
+        modelEmployees.add(nwEmp);
+      }
+      Navigator.pop(context);
     } else {
       alert(
         context,

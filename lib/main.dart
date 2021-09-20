@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rna_learning/screens/employees_screen.dart';
-import "package:rna_learning/models/employees.dart";
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +17,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       // home: const MyHomePage(title: 'Machine Learning RNA'),
-      home: EmployeesPage(Employees()),
+      home: EmployeesPage(),
     );
   }
 }
