@@ -1,12 +1,16 @@
+import 'package:flutter/gestures.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/rendering.dart';
+import 'package:rna_learning/components/alert.dart';
+import 'package:rna_learning/components/card_employee.dart';
 import 'package:rna_learning/models/employee.dart';
 import 'package:rna_learning/models/employees.dart';
 import 'package:rna_learning/screens/create_employee_screen.dart';
 
+// ignore: must_be_immutable
 class EmployeesPage extends StatefulWidget {
-  const EmployeesPage({Key? key}) : super(key: key);
-
+  Employees employees;
+  EmployeesPage(this.employees, {Key? key}) : super(key: key);
   @override
   _EmployeesPageState createState() => _EmployeesPageState();
 }
@@ -18,11 +22,13 @@ class _EmployeesPageState extends State<EmployeesPage> {
       appBar: AppBar(
         title: const Text("Employees"),
       ),
-      body: ListEmployees(),
+      body: ListEmployees(widget.employees),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const CreateEmployeePage()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CreateEmployeePage(widget.employees)));
         },
         child: const Icon(Icons.add, color: Colors.white),
         backgroundColor: Colors.pink,
@@ -31,24 +37,21 @@ class _EmployeesPageState extends State<EmployeesPage> {
   }
 }
 
+// ignore: must_be_immutable
 class ListEmployees extends StatefulWidget {
-  ListEmployees({Key? key}) : super(key: key);
+  Employees employees;
+  ListEmployees(this.employees, {Key? key}) : super(key: key);
   @override
   _ListEmployeesState createState() => _ListEmployeesState();
 }
 
 class _ListEmployeesState extends State<ListEmployees> {
-  Employees employees = Employees();
   String _filter = "";
-  final _findController = TextEditingController();
-  List<Employee> listEmployees = <Employee>[];
-
-  _ListEmployeesState() {
-    listEmployees = employees.employees;
-  }
+  var findController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    List<Employee> listEmployees = widget.employees.employees;
     return Column(children: [
       Padding(
         padding: const EdgeInsets.all(8),
@@ -56,12 +59,12 @@ class _ListEmployeesState extends State<ListEmployees> {
           decoration: const InputDecoration(
             labelText: "Find employees",
           ),
-          controller: _findController,
+          controller: findController,
           onChanged: (text) {
             setState(() {
               _filter = text;
             });
-            listEmployees = employees.filterByString(_filter);
+            listEmployees = widget.employees.filterByString(_filter);
           },
         ),
       ),
@@ -73,20 +76,32 @@ class _ListEmployeesState extends State<ListEmployees> {
               return Dismissible(
                 key: Key(crtEmp.name),
                 child: CardEmployee(crtEmp),
+                direction: DismissDirection.startToEnd,
+                dragStartBehavior: DragStartBehavior.start,
+                resizeDuration: const Duration(milliseconds: 500),
+                confirmDismiss: (direction) async {
+                  return await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return alertConfirmDismiss(context);
+                      });
+                },
                 onDismissed: (direction) {
                   setState(() {
-                    employees.employees.removeAt(index);
+                    widget.employees.employees.removeAt(index);
                   });
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    backgroundColor: Colors.pink,
-                    content: Text('Employee ${crtEmp.name} was deleted',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        )),
-                  ));
+                  alert(context,
+                      message: "Employee ${crtEmp.name} has been deleted");
                 },
-                background: Container(color: Colors.pink),
+                background: Padding(
+                  padding: const EdgeInsets.only(top: 5, bottom: 5),
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.only(left: 20.0),
+                    color: Colors.redAccent,
+                    child: const Icon(Icons.delete, color: Colors.white),
+                  ),
+                ),
               );
             }),
       ),
@@ -94,42 +109,16 @@ class _ListEmployeesState extends State<ListEmployees> {
   }
 }
 
-class CardEmployee extends StatelessWidget {
-  Employee employee;
-  CardEmployee(this.employee, {Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-        child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.pink,
-                  backgroundImage: NetworkImage(employee.photoUrl ?? ''),
-                ),
-                Column(
-                  children: [
-                    Text(
-                      '${employee.name} ${employee.lastName}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
-                    Text(employee.job,
-                        style: const TextStyle(
-                          color: Colors.pink,
-                        ))
-                  ],
-                ),
-                Column(children: [
-                  Text('${employee.dateOfBirthToString}'),
-                  Text("${employee.ageOfEmployee} Years"),
-                ])
-              ],
-            )));
-  }
-}
+AlertDialog alertConfirmDismiss(context) => AlertDialog(
+        title: const Text("Confirm"),
+        content: const Text("Are you sure you wish to detele this employee"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text("DELETE"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text("CANCEL"),
+          ),
+        ]);
