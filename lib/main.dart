@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rna_learning/screens/employees_screen.dart';
+import 'package:rna_learning/screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,13 +11,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       initialRoute: '/',
-      title: 'RNA Machine Learning',
+      title: 'Management of employees',
       theme: ThemeData(
         primarySwatch: Colors.pink,
         brightness: Brightness.dark,
       ),
-      // home: const MyHomePage(title: 'Machine Learning RNA'),
-      home: EmployeesPage(),
+      home: const MyHomePage(title: 'Login'),
     );
   }
 }
