@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import 'package:rna_learning/components/alert.dart';
 import 'package:rna_learning/models/users.dart';
 import 'package:rna_learning/screens/employees_screen.dart';
+import 'package:rna_learning/globals.dart' as globals;
 
 // ignore: must_be_immutable
 class Login extends StatefulWidget {
@@ -72,7 +73,11 @@ class _LoginState extends State<Login> {
 
   void _login() {
     var msg = _alertTryLogin(_usrController.text, _passController.text);
-    if (msg == null) {
+    if (msg.runtimeType != String) {
+      globals.username = msg.username;
+      globals.name = msg.name;
+      globals.lastName = msg.lastName;
+      globals.photoUrl = msg.photoUrl;
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => EmployeesPage()));
     } else {
@@ -80,11 +85,11 @@ class _LoginState extends State<Login> {
     }
   }
 
-  String? _alertTryLogin(String username, String password) {
+  dynamic _alertTryLogin(String username, String password) {
     var user = validateUser(username);
     if (user != null) {
       if (user.password == password) {
-        return null;
+        return user;
       } else {
         return "Password is incorrect, please try again";
       }

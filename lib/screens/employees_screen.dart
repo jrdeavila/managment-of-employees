@@ -6,6 +6,7 @@ import 'package:rna_learning/components/card_employee.dart';
 import 'package:rna_learning/models/employee.dart';
 import 'package:rna_learning/models/employees.dart';
 import 'package:rna_learning/screens/create_employee_screen.dart';
+import 'package:rna_learning/globals.dart' as globals;
 
 // ignore: must_be_immutable
 AlertDialog alertConfirmDismiss(context) => AlertDialog(
@@ -45,13 +46,30 @@ class _EmployeesPageState extends State<EmployeesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Employees"),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("Employees"),
+            Row(
+              children: [
+                Text(globals.name ?? 'user',
+                    style: const TextStyle(color: Colors.pink, fontSize: 14)),
+                const SizedBox(
+                  width: 15,
+                ),
+                CircleAvatar(
+                    backgroundImage: NetworkImage(globals.photoUrl), radius: 15)
+              ],
+            )
+          ],
+        ),
       ),
       body: ListEmployees(widget.employees),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CreateEmployeePage())).then((value) => setState(() {}));
+                  MaterialPageRoute(builder: (context) => CreateEmployeePage()))
+              .then((value) => setState(() {}));
           alert(
             context,
             message: "Employee updated successfully",
