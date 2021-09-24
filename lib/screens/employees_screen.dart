@@ -69,13 +69,16 @@ class _EmployeesPageState extends State<EmployeesPage> {
         onPressed: () async {
           await Navigator.push(context,
                   MaterialPageRoute(builder: (context) => CreateEmployeePage()))
-              .then((value) => setState(() {}));
-          alert(
-            context,
-            message: "Employee updated successfully",
-            color: Colors.green,
-            duration: 2,
-          );
+              .then((value) => setState(() {
+                    if (value == true) {
+                      alert(
+                        context,
+                        message: "Employee updated successfully",
+                        color: Colors.green,
+                        duration: 2,
+                      );
+                    }
+                  }));
         },
         child: const Icon(Icons.add, color: Colors.white),
         backgroundColor: Colors.pink,
@@ -119,13 +122,16 @@ class _ListEmployeesState extends State<ListEmployees> {
                             MaterialPageRoute(
                                 builder: (context) =>
                                     CreateEmployeePage(employee: crtEmp)))
-                        .then((value) => setState(() {}));
-                    alert(
-                      context,
-                      message: "Employee updated successfully",
-                      color: Colors.green,
-                      duration: 2,
-                    );
+                        .then((value) => setState(() {
+                              if (value == true) {
+                                alert(
+                                  context,
+                                  message: "Employee updated successfully",
+                                  color: Colors.green,
+                                  duration: 2,
+                                );
+                              }
+                            }));
                   },
                   child: Dismissible(
                     key: Key(crtEmp.name),

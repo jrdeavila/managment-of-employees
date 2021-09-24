@@ -22,7 +22,8 @@ class _CreateEmployeePageState extends State<CreateEmployeePage> {
       dateCtrl = TextEditingController();
   DateTime? dateOfBirth;
 
-  void loadData() {
+  @override
+  void initState() {
     if (widget.employee != null) {
       String? name = widget.employee != null ? widget.employee?.name : '';
       String? lstName =
@@ -43,7 +44,6 @@ class _CreateEmployeePageState extends State<CreateEmployeePage> {
 
   @override
   Widget build(BuildContext context) {
-    loadData();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Create Employee"),
@@ -92,7 +92,11 @@ class _CreateEmployeePageState extends State<CreateEmployeePage> {
                       child: ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              photoUrlCtrl.text = '';
+                              if (widget.employee == null) {
+                                photoUrlCtrl.text = '';
+                              } else {
+                                widget.employee?.photoUrl = "";
+                              }
                             });
                           },
                           child: const Expanded(
@@ -110,7 +114,11 @@ class _CreateEmployeePageState extends State<CreateEmployeePage> {
                   onTap: () async {
                     DateTime? date = await datePicker(context);
                     setState(() {
-                      dateOfBirth = date;
+                      if (widget.employee == null) {
+                        dateOfBirth = date;
+                      } else {
+                        widget.employee?.dateOfBirth = date!;
+                      }
                       dateCtrl.text = DateFormat("MMMM dd, yyyy")
                           .format(date ?? DateTime(0, 0, 0));
                     });
@@ -158,7 +166,7 @@ class _CreateEmployeePageState extends State<CreateEmployeePage> {
       } else {
         modelEmployees.add(nwEmp);
       }
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     } else {
       alert(
         context,
